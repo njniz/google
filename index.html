@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Sign In</title>
+  <meta name="google-signin-client_id" content="186469762520-5ot47d78epc4fgri3enff490jq0qhdoh.apps.googleusercontent.com">
+  
+  <style>
+    #my-signin2 {
+      margin: 20px;
+    }
+
+    .container {
+      margin: 20px;
+      margin-top: 0px;
+      background-color: rgba(66, 133, 244, 0.15);
+      border-radius: 10px;
+      display: none;
+    }
+
+    img {
+      width: 50%;
+      border-radius: 50%;
+    }
+
+    .id,
+    .email,
+    .name {
+      display: inline-block;
+      font-family: 'Verdana';
+    }
+
+    .name {
+      font-size: 30px;
+      position: relative;
+      top: -16px;
+      margin-left: 5px;
+    }
+
+    label {
+      font-family: 'Arial Black';
+    }
+
+    button {
+      display: block;
+      background-color: #4285F4;
+      border: 0px;
+      padding: 8px 20px;
+      color: white;
+      margin-top: 15px;
+      cursor: pointer;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="my-signin2"></div>
+  <div class="container">
+    <img src="" alt="profile" class="img">
+    <div class="name"></div>
+    <br>
+    <label>ID:</label>
+    <div class="id"></div>
+    <br>
+    <label>Email:</label>
+    <div class="email"></div>
+    <button onclick="signOut()">Sign out</button>
+  </div>
+
+  <script>
+    var container = document.querySelector('.container');
+    var img = document.querySelector('.img');
+    var getName = document.querySelector('.name');
+    var id = document.querySelector('.id');
+    var email = document.querySelector('.email');
+
+    function onSuccess(googleUser) {
+      var profile = googleUser.getBasicProfile();
+      img.src = profile.getImageUrl();
+      getName.innerHTML = profile.getName();
+      id.innerHTML = profile.getId();
+      email.innerHTML = profile.getEmail();
+      container.style.display = 'block';
+      console.log('Access Token: ' + googleUser.getAuthResponse().id_token);
+    }
+
+    function onFailure(error) {
+      console.log(error);
+    }
+
+    function renderButton() {
+      gapi.signin2.render('my-signin2', {
+        'scope': 'profile email',
+        'width': 240,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSuccess,
+        'onfailure': onFailure,
+      });
+    }
+
+    function signOut() {
+      var auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(function() {
+        location.reload();
+      });
+      auth2.disconnect();
+    }
+  </script>
+
+  <script src="https://apis.google.com/js/platform.js?onload=renderButton"></script>
+</body>
+</html>
